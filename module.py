@@ -5,6 +5,7 @@ import asyncio
 import getpass
 import i3ipc
 import platform
+import re
 from time import sleep
 
 from icon_resolver import IconResolver
@@ -29,8 +30,8 @@ ICONS = [
 ]
 
 FORMATERS = {
-    "Chromium": lambda title: title.replace(" - Chromium", ""),
-    "Firefox": lambda title: title.replace(" - Mozilla Firefox", ""),
+    "Chromium": lambda title: title.replace(" – Chromium", ""),
+    "Firefox": lambda title: title.replace(" – Mozilla Firefox", ""),
     "Emacs": lambda title: title.replace(" – Doom Emacs", ""),
     "Xterm": lambda title: title.replace("%s@%s: " % (USER, HOSTNAME), ""),
 }
@@ -97,17 +98,21 @@ def get_prefix(app):
 
     return "%%{T%s}%s%%{T-}" % (ICON_FONT, icon)
 
+def shorten_title(title):
+    if len(title) > MAX_LENGTH:
+        title = title[: MAX_LENGTH - 3] + "..."
+
+    return title
+
 
 def format_title(app):
     klass = app.window_class
     name = app.name
 
-    title = FORMATERS[klass](name) if klass in FORMATERS else name
-
-    if len(title) > MAX_LENGTH:
-        title = title[: MAX_LENGTH - 3] + "..."
-
-    return title
+    for pattern, formatter in FORMATERS.items():
+        if re.match(pattern, klass):
+            return shorten_title(formatter(name))
+    return shorten_title(name)
 
 
 main()
