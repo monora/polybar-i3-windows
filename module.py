@@ -11,7 +11,7 @@ from time import sleep
 from icon_resolver import IconResolver
 
 #: Max length of single window title
-MAX_LENGTH = 20
+MAX_LENGTH = 10
 #: Base 1 index of the font that should be used for icons
 ICON_FONT = 3
 
