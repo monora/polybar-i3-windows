@@ -4,6 +4,7 @@ import os
 import asyncio
 import getpass
 import i3ipc
+from i3ipc import Event
 import platform
 import re
 from time import sleep
@@ -45,9 +46,10 @@ icon_resolver = IconResolver(ICONS)
 def main():
     i3 = i3ipc.Connection()
 
-    i3.on("workspace::focus", on_change)
-    i3.on("window::focus", on_change)
-    i3.on("window", on_change)
+    i3.on(Event.WORKSPACE_INIT, on_change)
+    i3.on(Event.WORKSPACE_FOCUS, on_change)
+    i3.on(Event.WINDOW_FOCUS, on_change)
+    i3.on(Event.WINDOW, on_change)
 
     loop = asyncio.get_event_loop()
 
