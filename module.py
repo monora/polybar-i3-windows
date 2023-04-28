@@ -3,6 +3,7 @@
 import os
 import asyncio
 import getpass
+from sys import stderr
 import i3ipc
 from i3ipc import Event
 import platform
@@ -65,13 +66,16 @@ def on_change(i3, e):
 
 
 def render_apps(i3):
-    tree = i3.get_tree()
-    apps = tree.leaves()
-    apps.sort(key=lambda app: app.workspace().name)
+    try:
+        tree = i3.get_tree()
+        apps = tree.leaves()
+        apps.sort(key=lambda app: app.workspace().name)
 
-    out = "%{O12}".join(format_entry(app) for app in apps)
-
-    print(out, flush=True)
+        out = "%{O12}".join(format_entry(app) for app in apps)
+        # print(f"debug: {out}", file=stderr)
+        print(out, flush=True)
+    except Exception as ex:
+        print(f"Error in i3-windows.render_apps: {ex}", file=stderr)
 
 
 def format_entry(app):
